@@ -1,0 +1,382 @@
+# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: Contributors to PyPSA-Eur <https://github.com/pypsa/pypsa-eur>
+#
+# SPDX-License-Identifier: MIT
+
+# This file is used to define the scenarios that are run by snakemake. Each entry on the first level is a scenario. Each scenario can contain configuration overrides with respect to the config/config.yaml settings.
+#
+# Example
+#
+# custom-scenario: # name of the scenario
+#   electricity:
+#       renewable_carriers: [wind, solar] # override the list of renewable carriers
+
+Base:
+  sector:
+    H2_retrofit: true
+  
+Base_no_retrofit:
+  sector:
+    H2_retrofit: false
+
+Base_cost_electrolysis-:
+  costs:
+    overwrites: {FOM: {offwind: 1.39}, lifetime: {offwind-float: 30}, investment:{electrolysis: 500000}}
+
+Base_cost_onwind+20:
+  costs:
+    overwrites: {FOM: {offwind: 1.39}, lifetime: {offwind-float: 30}, investment:{onwind: 1222965}}
+
+Base_aviation-90:
+  sector:
+      aviation_demand_factor: 0.1
+
+Base_import:
+  sector:
+    imports:
+      enable: true
+      limit: .inf
+      limit_sense: <=
+      price:
+        H2: 74
+        NH3: 97
+        methanol: 121
+        gas: 122
+        oil: 125
+
+
+Base_TYNDP_2050:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050.csv
+
+
+Base_cost_solar-20:
+  costs:
+    overwrites: {FOM: {offwind: 1.39}, lifetime: {offwind-float: 30}, investment:{solar: 326974, solar-rooftop: 419886, solar-rooftop commercial: 331121, solar-rooftop residential: 508651, solar-utility: 234062, solar-utility single-axis tracking: 282010 }}
+
+
+Base_biomass_high:
+  sector:
+    biomass_transport: false
+  biomass:
+    year: 2050
+    scenario: ENS_High
+  
+
+
+Base_onwind_solar_capped_TYNDP:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050_onwind_sol_cap.csv
+
+
+
+Base_cost_onwind+30_6h:
+  costs:
+    overwrites: {FOM: {offwind: 1.39}, lifetime: {offwind-float: 30}, investment:{onwind: 1324879}}
+
+Base_onwind_tech:
+  renewable:
+    onwind:
+      resource:
+        turbine: Vestas_V112_3MW
+
+Base_cost_electrolysers+:
+  costs:
+    overwrites: {FOM: {offwind: 1.39}, lifetime: {offwind-float: 30}, investment:{electrolysis: 1500000}}
+
+
+Base_cost_solar-30_6h:
+  costs:
+    overwrites: {FOM: {offwind: 1.39}, lifetime: {offwind-float: 30}, investment:{solar: 286102, solar-rooftop: 367401, solar-rooftop commercial: 289731, solar-rooftop residential: 445070, solar-utility: 204804, solar-utility single-axis tracking: 246759 }}
+
+
+Base_onwind_tech_new:
+  renewable:
+    onwind:
+      resource:
+        turbine: eno_126_3.5
+
+Base_transport-50:
+  sector:
+    aviation_demand_factor: 0.1
+    shipping_methanol_share:
+      2020: 0
+      2025: 0.02
+      2030: 0.07
+      2035: 0.16
+      2040: 0.27
+      2045: 0.37
+      2050: 0.5
+    shipping_oil_share:
+      2020: 1
+      2025: 0.98
+      2030: 0.93
+      2035: 0.84
+      2040: 0.22
+      2045: 0.37
+      2050: 0.5
+
+
+Base_CO2:
+  co2_budget:
+    2050: 0.010 
+
+Base_growth_limited_6h01:
+  sector:
+    limit_max_growth:
+      enable: true
+      # allowing 30% larger than max historic growth
+    factor: 1
+    max_growth:  # unit GW
+      onwind: 1 # onshore max grow so far 16 GW in Europe https://www.iea.org/reports/renewables-2020/wind
+      solar: 66 # solar max grow so far 66 GW in Europe 2024
+      offwind-ac: 35 # offshore max grow so far 3.5 GW in Europe https://windeurope.org/about-wind/statistics/offshore/european-offshore-wind-industry-key-trends-statistics-2019/
+      offwind-dc: 35
+    max_relative_growth:
+      onwind: 0.1
+      solar: 3
+      offwind-ac: 3
+      offwind-dc: 3
+
+Base_growth_limited_6h02:
+  sector:
+    limit_max_growth:
+      enable: true
+      # allowing 30% larger than max historic growth
+    factor: 0.1
+    max_growth:  # unit GW
+      onwind: 1 # onshore max grow so far 16 GW in Europe https://www.iea.org/reports/renewables-2020/wind
+      solar: 66 # solar max grow so far 66 GW in Europe 2024
+      offwind-ac: 35 # offshore max grow so far 3.5 GW in Europe https://windeurope.org/about-wind/statistics/offshore/european-offshore-wind-industry-key-trends-statistics-2019/
+      offwind-dc: 35
+    max_relative_growth:
+      onwind: 0.1
+      solar: 3
+      offwind-ac: 3
+      offwind-dc: 3
+
+Base_growth_limited:
+  sector:
+    limit_max_growth:
+      enable: true
+      # allowing 30% larger than max historic growth
+    factor: 1.3
+    max_growth:  # unit GW
+      onwind: 16 # onshore max grow so far 16 GW in Europe https://www.iea.org/reports/renewables-2020/wind
+      solar: 66 # solar max grow so far 66 GW in Europe 2024
+      offwind-ac: 35 # offshore max grow so far 3.5 GW in Europe https://windeurope.org/about-wind/statistics/offshore/european-offshore-wind-industry-key-trends-statistics-2019/
+      offwind-dc: 35
+    max_relative_growth:
+      onwind: 3
+      solar: 3
+      offwind-ac: 3
+      offwind-dc: 3
+
+Base_GR:
+  sector:
+    H2_retrofit: true
+
+offwind_40_GW_2050_onwind_changed:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_offwind_40_GW_2050.csv
+
+onwind_caped:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050_onwind_cap.csv
+
+Base_aviation3:
+  sector:
+      aviation_demand_factor: 3.
+
+Base_aviation-50:
+  sector:
+      aviation_demand_factor: 0.5
+
+
+
+Base_cost_solar+:
+  costs:
+    overwrites: {FOM: {offwind: 1.39}, lifetime: {offwind-float: 30}, investment:{solar: 490460, solar-rooftop: 629829, solar-rooftop commercial: 496680, solar-rooftop residential: 762980, solar-utility: 351100, solar-utility single-axis tracking: 423020 }}
+
+
+
+TYNDP_2050_import_oil_and_gas:
+  sector:
+    solid_biomass_import:
+      enable: true
+      price: 54 #EUR/MWh
+      max_amount: 1390 # TWh
+      upstream_emissions_factor: .1 #share of solid biomass CO2 emissions at full combustion
+    imports:
+      enable: true
+      limit: .inf
+      limit_sense: <=
+      price:
+        H2: 174
+        NH3: 197
+        methanol: 1121
+        gas: 122
+        oil: 125
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050.csv
+
+TYNDP_2050_import:
+  sector:
+    solid_biomass_import:
+      enable: true
+      price: 54 #EUR/MWh
+      max_amount: 1390 # TWh
+      upstream_emissions_factor: .1 #share of solid biomass CO2 emissions at full combustion
+    imports:
+      enable: true
+      limit: .inf
+      limit_sense: <=
+      price:
+        H2: 74
+        NH3: 97
+        methanol: 121
+        gas: 122
+        oil: 125
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050.csv
+
+TYNDP_2050_import_onwind_solar_capped:
+  sector:
+    solid_biomass_import:
+      enable: true
+      price: 54 #EUR/MWh
+      max_amount: 1390 # TWh
+      upstream_emissions_factor: .1 #share of solid biomass CO2 emissions at full combustion
+    imports:
+      enable: true
+      limit: .inf
+      limit_sense: <=
+      price:
+        H2: 74
+        NH3: 97
+        methanol: 121
+        gas: 122
+        oil: 125
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050_onwind_sol_cap.csv
+
+Base_transmission:
+  electricity:
+    transmission_limit: v1.1
+
+TYNDP_2050:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050.csv
+
+TYNDP_2050_H2Pot:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050.csv
+
+TYNDP_2050_Retrofit:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050.csv
+  sector:
+    H2_retrofit: true
+
+TYNDP_2050_max:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_max_TYNDP_2050.csv
+
+TYNDP_2050_default_offwind:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050.csv
+  renewable:
+    onwind:
+      resource:
+        turbine: Vestas_V112_3MW
+    offwind-ac:
+      resource:
+        turbine: NREL_ReferenceTurbine_2020ATB_5.5MW
+    offwind-dc:
+      resource:
+        turbine: NREL_ReferenceTurbine_2020ATB_5.5MW
+    offwind-float:
+      resource:
+        turbine: NREL_ReferenceTurbine_5MW_offshore
+
+TYNDP_2050_Onwind_Sup:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050_Onwind_Sup.csv
+
+TYNDP_2050_Solar_Sup:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050_Solar_Sup.csv
+
+TYNDP_2050_Solar_Inf:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050_Solar_Inf.csv
+
+TYNDP_2050_NUTS3:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050.csv
+  clustering:
+    mode: administrative
+    administrative:
+      level: 0
+      FR: 3
+
+TYNDP_2050_NUTS3_FR:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050.csv
+  clustering:
+    mode: administrative
+    administrative:
+      level: 0
+      FR: 3
+  countries: ['FR']
+  sector:
+    hydrogen_underground_storage_locations:
+    - onshore  # more than 50 km from sea
+
+TYNDP_2050_busmap:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050.csv
+
+TYNDP_2050_EQ:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050.csv
+    constraints:
+      EQ: 0.3c
+
+
+onwind_solar_caped_default_turbine:
+  solving:
+    agg_p_nom_limits:
+      file: data/agg_p_nom_minmax_TYNDP_2050_onwind_sol_cap.csv
+  renewable:
+    onwind:
+      resource:
+        turbine: Vestas_V112_3MW
+    offwind-ac:
+      resource:
+        turbine: NREL_ReferenceTurbine_2020ATB_5.5MW
+    offwind-dc:
+      resource:
+        turbine: NREL_ReferenceTurbine_2020ATB_5.5MW
+    offwind-float:
+      resource:
+        turbine: NREL_ReferenceTurbine_5MW_offshore
