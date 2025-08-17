@@ -1,0 +1,249 @@
+# SPDX-FileCopyrightText: Contributors to PyPSA-Eur <https://github.com/pypsa/pypsa-eur>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+run:
+  name: "Base_cost_onwind+20" # Change the name of the scenarios
+  prefix: "Base_2050"
+  scenarios:
+    enable: true
+    file: config/scenarios.yaml
+  disable_progressbar: true
+  shared_resources:
+    policy: false
+  shared_cutouts: true
+
+foresight: myopic # myopic8
+
+scenario:
+  clusters:
+  - adm
+  sector_opts:
+  - ''
+  opts:
+  - ''
+  planning_horizons:
+  - 2050
+
+
+countries: ['FR', 'BE', 'CH', 'DE', 'ES', 'GB', 'IE', 'IT', 'AT', 'CZ', 'DK', 'LU', 'NL', 'NO', 'PL', 'PT', 'SE', 'SI']
+#Direct interoco: Belgique, Switzerland, Germany, Spain, UK, Ireland, Italy
+#Indirect interco: Austria, Czech Republic, Denmark, (Greece), Luxembourg, (Montenegro), Netherlands, Norway, Poland, Portugal, Sweden, Slovenia
+
+
+
+snapshots:
+  start: "2023-01-01"
+  end: "2024-01-01"
+
+electricity:
+
+  extendable_carriers:
+    Generator: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float, OCGT, CCGT, nuclear]
+    StorageUnit: []
+    Store: [H2, battery]
+    Link: [H2 pipeline]
+
+  conventional_carriers: [nuclear, oil, OCGT, CCGT, coal, lignite, geothermal, biomass]
+  renewable_carriers: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float, hydro]
+
+  estimate_renewable_capacities:
+    enable: true
+    from_opsd: true
+    year: 2020
+  
+  custom_powerplants: true
+  everywhere_powerplants: [nuclear, biomass, geothermal]
+
+atlite:
+  default_cutout: europe-2023-sarah3-era5
+  cutouts:
+    europe-2023-sarah3-era5:
+      module: era5
+      x: [4., 15.]
+      y: [46., 56.]
+      time: ["2023-01-01", "2024-01-01"]
+
+renewable:
+  onwind:
+    cutout: europe-2023-sarah3-era5
+  offwind-ac:
+    cutout: europe-2023-sarah3-era5
+    resource:
+      method: wind
+      turbine: NREL_ReferenceTurbine_2020ATB_18MW_offshore
+    capacity_per_sqkm: 5
+    max_shore_distance: 80000
+    max_depth: 80
+  offwind-dc:
+    cutout: europe-2023-sarah3-era5
+    resource:
+      method: wind
+      turbine: NREL_ReferenceTurbine_2020ATB_18MW_offshore
+    capacity_per_sqkm: 5
+    min_shore_distance: 30000
+    max_depth: 80
+  offwind-float:
+    cutout: europe-2023-sarah3-era5
+    resource:
+      method: wind
+      turbine: NREL_ReferenceTurbine_2020ATB_18MW_offshore
+    capacity_per_sqkm: 5
+    min_depth: 50
+    max_depth: 1000
+  solar:
+    cutout: europe-2023-sarah3-era5
+  solar-hsat:
+    cutout: europe-2023-sarah3-era5
+  hydro:
+    cutout: europe-2023-sarah3-era5
+
+# links:
+#   p_max_pu: 1.0
+#   p_min_pu: -1.0
+#   p_nom_max: 50000
+#   max_extension: 30000 #MW
+#   length_factor: 1.25
+#   under_construction: 'keep' # 'zero': set capacity to zero, 'remove': remove, 'keep': with full capacity for lines in grid extract
+
+
+sector:
+  bev_dsm: true
+  bev_avail_max: 0.80
+  bev_avail_mean: 0.55
+  v2g: true
+  land_transport_electric_share:
+    2020: 0
+    2025: 0.05
+    2030: 0.15
+    2035: 0.35
+    2040: 0.55
+    2045: 0.75
+    2050: 1
+  land_transport_ice_share:
+    2020: 1
+    2025: 0.95
+    2030: 0.85
+    2035: 0.65
+    2040: 0.45
+    2045: 0.25
+    2050: 0
+  shipping_methanol_share:
+    2020: 0
+    2025: 0.05
+    2030: 0.15
+    2035: 0.35
+    2040: 0.55
+    2045: 0.75
+    2050: 1
+  shipping_oil_share:
+    2020: 1
+    2025: 0.95
+    2030: 0.85
+    2035: 0.65
+    2040: 0.45
+    2045: 0.25
+    2050: 0
+  aviation_demand_factor: 1.
+  regional_oil_demand: true
+  regional_coal_demand: true
+  regional_co2_sequestration_potential:
+    enable: true
+  co2_spatial: true
+  co2_network: true
+  hydrogen_underground_storage: true
+  hydrogen_underground_storage_locations:
+  - onshore  # more than 50 km from sea
+  - nearshore    # within 50 km of sea
+  - offshore
+  methanol:
+    regional_methanol_demand: true
+    biomass_to_methanol: true
+    biomass_to_methanol_cc: true
+  ammonia: regional
+  H2_network: true
+  gas_network: false
+  H2_retrofit: true
+  gas_network_connectivity_upgrade: 1
+  gas_distribution_grid: true
+  biomass_spatial: true
+  biomass_transport: false
+  biomass_to_liquid: true
+  biomass_to_liquid_cc: true
+  biogas_upgrading_cc: true
+  electrobiofuels: true
+  biosng: true
+  biosng_cc: true
+  bioH2: true
+  municipal_solid_waste: true
+
+industry:
+  waste_to_energy: true
+  waste_to_energy_cc: true
+
+costs:
+  year: 2050
+  version: v0.10.1
+  overwrites:  {FOM: {offwind: 1.39}, lifetime: {offwind-float: 30}}
+
+biomass:
+  year: 2050
+  scenario: ENS_Med
+  classes:
+    solid biomass:
+    - Agricultural waste
+    - Fuelwood residues
+    - Secondary Forestry residues - woodchips
+    - Sawdust
+    - Residues from landscape care
+    - Sugar from sugar beet
+    - Rape seed
+    - "Sunflower, soya seed "
+    - Bioethanol barley, wheat, grain maize, oats, other cereals and rye
+    - Miscanthus, switchgrass, RCG
+    - Willow
+    - Poplar
+    - FuelwoodRW
+    - C&P_RW
+    biogas:
+    - Manure solid, liquid
+    - Sludge
+    municipal solid waste:
+    - Municipal waste
+
+
+clustering:
+  mode: administrative
+  administrative:
+    level: 0
+    FR: 1
+  temporal:
+    resolution_sector: 1h
+
+
+solving:
+  solver:
+    name: gurobi
+    options: gurobi-default
+  solver_options:
+    gurobi-default:
+      threads: 14
+      MIPGap: 5.e-3
+      BarConvTol: 1.e-5
+      FeasibilityTol: 1.e-4
+      OptimalityTol: 1.e-4
+#   agg_p_nom_limits:
+#     agg_offwind: true
+#     agg_solar: true
+#     include_existing: true
+#     file: data/agg_p_nom_minmax_sin_constraints.csv
+
+# constraints:
+#     CCL: true   
+
+
+
+
+
+
+
